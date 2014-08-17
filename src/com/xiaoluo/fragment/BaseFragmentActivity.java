@@ -48,7 +48,10 @@ public abstract class BaseFragmentActivity extends ActionBarActivity {
 	protected void onPause() {
 		super.onPause();
 	}
-
+	
+	/**
+	 * 重启应用
+	 */
 	protected void restartApplication() {
 		Trace.d(getClass() +" restartApplication");
 		

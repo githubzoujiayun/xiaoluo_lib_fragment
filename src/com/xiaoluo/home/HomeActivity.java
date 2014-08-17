@@ -26,7 +26,6 @@ public class HomeActivity extends BaseFragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		setContentView(R.layout.activity_home);
 	}
 	
 	
@@ -92,7 +91,6 @@ public class HomeActivity extends BaseFragmentActivity {
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		
 		Trace.d("HomeActivity:onRestart");
 		if(getIntent().getBooleanExtra(Constants.RESTART_APP, false)) {
 			protectApplication();
