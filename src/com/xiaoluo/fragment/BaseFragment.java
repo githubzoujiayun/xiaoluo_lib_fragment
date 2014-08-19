@@ -1,9 +1,9 @@
 package com.xiaoluo.fragment;
 
 import com.xiaoluo.home.R;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 /**
  * Copyright 2014 Xiaoluo's Studio
@@ -24,10 +24,9 @@ public class BaseFragment extends Fragment {
 		getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
 	}
 
-	@Override
 	public void startActivityForResult(Intent intent, int requestCode,
 			Bundle options) {
-		super.startActivityForResult(intent, requestCode, options);
+		super.startActivityForResult(intent, requestCode);
 		getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
 	}
 }

@@ -1,90 +1,85 @@
 package com.xiaoluo.home;
 
-import java.util.ArrayList;
+import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
+import android.support.v7.app.ActionBar.TabListener;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.xiaoluo.fragment.BaseFragmentActivity;
+import com.xiaoluo.fragment.ModuleFragment;
 import com.xiaoluo.fragment.SplashActivity;
 import com.xiaoluo.utilities.Constants;
 import com.xiaoluo.utilities.Trace;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
+public class HomeActivity extends BaseFragmentActivity implements TabListener, OnPageChangeListener {
+	private ViewPager mHemoPager;
+	private ActionBar mActionBar;
+	private ModuleAdapter mAdapter;
+	private String[] tabs = new String[]{"萝莉", "女王", "御姐"};
 
-public class HomeActivity extends BaseFragmentActivity {
-	private GridView mModulesGrv;
-	private ModuleAdapter mModuleAdapter;
-	private ArrayList<String> entities = new ArrayList<String>();
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-	
-	
 	@Override
 	protected void setContentView() {
 		setContentView(R.layout.activity_home);
 	}
-	
+
 	@Override
 	protected void initializeData() {
-		
+
 	}
-	
+
 	@Override
 	protected void initializeViews() {
+		mHemoPager = (ViewPager)findViewById(R.id.mHemoPager);
 		
+		mAdapter = new ModuleAdapter(getSupportFragmentManager());
+		mHemoPager.setAdapter(mAdapter);
+		mHemoPager.setOnPageChangeListener(this);
+		
+		mActionBar = getSupportActionBar();
+		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+		// Add 3 tabs, specifying the tab's text and TabListener
+	    for (int i = 0; i < tabs.length; i++) {
+	    	mActionBar.addTab(mActionBar.newTab().setText(tabs[i]).setTabListener(this));
+	    }
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-//		getMenuInflater().inflate(R.menu.home, menu);
-		
-//		MenuItem item = menu.add(0, 101, 0, "设置");
-//		item.setIcon(R.drawable.ic_launcher);
-//		MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-		
+		super.onCreateOptionsMenu(menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-//		int id = item.getItemId();
-//		if (id == R.id.action_settings) {
-//			return true;
-//		}
-//		return super.onOptionsItemSelected(item);
-		
-//		if(item.getItemId() == 101) {
-//			startActivities(this, SettingActivity.class);
-//		}
-		
+
 		return true;
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		
+
 		Trace.d("HomeActivity:onNewIntent");
-		if(intent.getBooleanExtra(Constants.RESTART_APP, false)) {
+		if (intent.getBooleanExtra(Constants.RESTART_APP, false)) {
 			protectApplication();
-		} else if(intent.getBooleanExtra(Constants.RELOGIN_APP, false)) {
+		} else if (intent.getBooleanExtra(Constants.RELOGIN_APP, false)) {
 			// reLogin();
 		} else {
-//			type = intent.getStringExtra(Constants.KEY_ACTION_TYPE);
-//			UserInfo mUserInfo = (UserInfo) intent.getSerializableExtra(UserInfo.USER_INFO);
-//			if(TextUtil.isValidate(type) && mDrawerFragment != null) {
-//				mDrawerFragment.setCurrentFragment(type, mUserInfo);
-//			}
+			// type = intent.getStringExtra(Constants.KEY_ACTION_TYPE);
+			// UserInfo mUserInfo = (UserInfo)
+			// intent.getSerializableExtra(UserInfo.USER_INFO);
+			// if(TextUtil.isValidate(type) && mDrawerFragment != null) {
+			// mDrawerFragment.setCurrentFragment(type, mUserInfo);
+			// }
 		}
 	}
 
@@ -92,7 +87,7 @@ public class HomeActivity extends BaseFragmentActivity {
 	protected void onRestart() {
 		super.onRestart();
 		Trace.d("HomeActivity:onRestart");
-		if(getIntent().getBooleanExtra(Constants.RESTART_APP, false)) {
+		if (getIntent().getBooleanExtra(Constants.RESTART_APP, false)) {
 			protectApplication();
 		}
 	}
@@ -102,41 +97,56 @@ public class HomeActivity extends BaseFragmentActivity {
 		startActivity(new Intent(this, SplashActivity.class));
 	}
 	
-	class ModuleAdapter extends BaseAdapter {
-		private ViewHolder holder;
-		
-		@Override
-		public int getCount() {
-			return entities.size();
-		}
+	// Since this is an object collection, use a FragmentStatePagerAdapter,
+	// and NOT a FragmentPagerAdapter.
+	public class ModuleAdapter extends FragmentStatePagerAdapter {
+	    public ModuleAdapter(FragmentManager fm) {
+	        super(fm);
+	    }
 
-		@Override
-		public Object getItem(int position) {
-			return entities.get(position);
-		}
+	    @Override
+	    public Fragment getItem(int i) {
+	        return ModuleFragment.newInstance(tabs[i]);
+	    }
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
+	    @Override
+	    public int getCount() {
+	        return tabs.length;
+	    }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-//			if(convertView == null || convertView.getTag() == null) {
-//				holder = new ViewHolder();
-//				convertView = (LinearLayout) LayoutInflater.from(HomeActivity.this).inflate(R.layout.activity_home_modyfy, parent);
-//				holder.mModuleIcon = (ImageView) convertView.findViewById(R.id.mModuleIcon);
-//			} else {
-//				holder = (ViewHolder) convertView.getTag();
-//			}
-//			holder.mModuleIcon.setImageBitmap(bm);;
-			
-			return convertView;
-		}
+	    @Override
+	    public CharSequence getPageTitle(int position) {
+	        return tabs[position];
+	    }
 	}
-	
-	static class ViewHolder {
-		ImageView mModuleIcon;
-		TextView mModuleText;
+
+	@Override
+	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
+		
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction arg1) {
+		 mHemoPager.setCurrentItem(tab.getPosition());
+	}
+
+	@Override
+	public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
+		
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+		
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+		mActionBar.setSelectedNavigationItem(position);
 	}
 }
