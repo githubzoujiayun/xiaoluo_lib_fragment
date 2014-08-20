@@ -9,5 +9,5 @@ import com.xiaoluo.fragment.BaseFragment;
  * @version create time: 2014年8月20日 - 上午1:16:28
  */
 public class ModuleFragment extends BaseFragment {
-
+	
 }

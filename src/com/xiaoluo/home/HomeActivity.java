@@ -1,5 +1,7 @@
 package com.xiaoluo.home;
 
+import java.util.ArrayList;
+
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,11 +15,16 @@ import android.support.v7.app.ActionBar.TabListener;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.xiaoluo.entities.ModuleEntity;
 import com.xiaoluo.fragment.BaseFragmentActivity;
 import com.xiaoluo.fragment.ModuleFragment;
 import com.xiaoluo.fragment.SplashActivity;
+import com.xiaoluo.net.Request;
+import com.xiaoluo.net.Request.RequestMethod;
+import com.xiaoluo.net.callback.JsonCallback;
 import com.xiaoluo.utilities.Constants;
 import com.xiaoluo.utilities.Trace;
+import com.xiaoluo.utilities.UrlHelper;
 
 public class HomeActivity extends BaseFragmentActivity implements TabListener, OnPageChangeListener {
 	private ViewPager mHemoPager;
@@ -45,7 +52,27 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 		
 		mActionBar = getSupportActionBar();
 		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		
+		Request request = new Request(UrlHelper.getModuleUrl(), RequestMethod.GET);
+		request.setCallback(new JsonCallback<ArrayList<ModuleEntity>>() {
 
+			@Override
+			public void onFailure(Exception result) {
+				
+			}
+
+			@Override
+			public void onSuccess(ArrayList<ModuleEntity> result) {
+				
+			}
+
+			@Override
+			public ArrayList<ModuleEntity> onPreHandler(
+					ArrayList<ModuleEntity> t) {
+				return t;
+			}
+		});
+		
 		// Add 3 tabs, specifying the tab's text and TabListener
 	    for (int i = 0; i < tabs.length; i++) {
 	    	mActionBar.addTab(mActionBar.newTab().setText(tabs[i]).setTabListener(this));
