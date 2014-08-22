@@ -1,4 +1,4 @@
-package com.xiaoluo.fragment;
+package com.xiaoluo;
 
 import com.xiaoluo.home.HomeActivity;
 

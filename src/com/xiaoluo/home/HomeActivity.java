@@ -14,11 +14,12 @@ import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
+import com.google.gson.reflect.TypeToken;
+import com.xiaoluo.BaseFragmentActivity;
+import com.xiaoluo.SplashActivity;
 import com.xiaoluo.entities.ModuleEntity;
-import com.xiaoluo.fragment.BaseFragmentActivity;
-import com.xiaoluo.fragment.ModuleFragment;
-import com.xiaoluo.fragment.SplashActivity;
 import com.xiaoluo.net.Request;
 import com.xiaoluo.net.Request.RequestMethod;
 import com.xiaoluo.net.callback.JsonCallback;
@@ -30,6 +31,7 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 	private ViewPager mHemoPager;
 	private ActionBar mActionBar;
 	private ModuleAdapter mAdapter;
+	private ArrayList<ModuleEntity> mModuleEntities = new ArrayList<ModuleEntity>();
 	private String[] tabs = new String[]{"萝莉", "女王", "御姐"};
 
 	@Override
@@ -48,9 +50,11 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 		
 		mAdapter = new ModuleAdapter(getSupportFragmentManager());
 		mHemoPager.setAdapter(mAdapter);
+//		mHemoPager.setOffscreenPageLimit(3);
 		mHemoPager.setOnPageChangeListener(this);
 		
 		mActionBar = getSupportActionBar();
+		// tabs应该展示在ActionBar上面
 		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		
 		Request request = new Request(UrlHelper.getModuleUrl(), RequestMethod.GET);
@@ -58,12 +62,20 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 
 			@Override
 			public void onFailure(Exception result) {
-				
+				Trace.d("HomeActivity.java:onFailure():"+ result);
 			}
 
 			@Override
 			public void onSuccess(ArrayList<ModuleEntity> result) {
+				mModuleEntities.clear();
+				mModuleEntities.addAll(result);
 				
+				mAdapter.notifyDataSetChanged();
+				
+				// Add 3 tabs, specifying the tab's text and TabListener
+				for (int i = 0; i < mModuleEntities.size(); i++) {
+					mActionBar.addTab(mActionBar.newTab().setText(mModuleEntities.get(i).getModuleName()).setTabListener(HomeActivity.this));
+				}
 			}
 
 			@Override
@@ -71,12 +83,8 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 					ArrayList<ModuleEntity> t) {
 				return t;
 			}
-		});
-		
-		// Add 3 tabs, specifying the tab's text and TabListener
-	    for (int i = 0; i < tabs.length; i++) {
-	    	mActionBar.addTab(mActionBar.newTab().setText(tabs[i]).setTabListener(this));
-	    }
+		}.setReturnType(new TypeToken<ArrayList<ModuleEntity>>(){}.getType()));
+		request.execute();
 	}
 
 	@Override
@@ -133,18 +141,37 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 
 	    @Override
 	    public Fragment getItem(int i) {
-	        return ModuleFragment.newInstance(tabs[i]);
+	        return ModuleFragment.newInstance(mModuleEntities.get(i));
 	    }
 
 	    @Override
 	    public int getCount() {
-	        return tabs.length;
+	        return mModuleEntities.size();
 	    }
 
 	    @Override
 	    public CharSequence getPageTitle(int position) {
-	        return tabs[position];
+	        return mModuleEntities.get(position).getModuleName();
 	    }
+
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			Trace.d("destroyItem"+ position);
+			super.destroyItem(container, position, object);
+		}
+
+		@Override
+		public Object instantiateItem(ViewGroup arg0, int arg1) {
+			Trace.d("instantiateItem"+ arg1);
+			return super.instantiateItem(arg0, arg1);
+		}
+
+		@Override
+		public void setPrimaryItem(ViewGroup container, int position,
+				Object object) {
+			Trace.d("setPrimaryItem"+ position);
+			super.setPrimaryItem(container, position, object);
+		}
 	}
 
 	@Override

@@ -1,12 +1,14 @@
 package com.xiaoluo.entities;
 
+import java.io.Serializable;
+
 /**
  * Copyright 2014 Xiaoluo's Studio
  * 
  * @author xiaoluo 
  * @version create time: 2014年8月19日 - 下午1:26:24
  */
-public class CategoryEntity {
+public class CategoryEntity implements Serializable {
 	private String categoryId;
 	private String description;
 	private String iconUrl;

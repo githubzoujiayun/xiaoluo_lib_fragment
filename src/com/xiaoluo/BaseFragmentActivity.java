@@ -1,4 +1,4 @@
-package com.xiaoluo.fragment;
+package com.xiaoluo;
 
 import android.content.Intent;
 import android.os.Bundle;

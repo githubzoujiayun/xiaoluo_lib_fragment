@@ -1,14 +1,16 @@
 package com.xiaoluo.entities;
 
+import java.io.Serializable;
+
 /**
  * Copyright 2014 Xiaoluo's Studio
  * 
  * @author xiaoluo 
  * @version create time: 2014年8月19日 - 下午1:26:49
  */
-public class ModuleEntity {
+public class ModuleEntity implements Serializable {
 	private String groupId;
-	private String modulename;
+	private String moduleName;
 	private String iconUrl;
 	private String point;
 	private String description;
@@ -21,12 +23,12 @@ public class ModuleEntity {
 		this.groupId = groupId;
 	}
 	
-	public String getModulename() {
-		return modulename;
+	public String getModuleName() {
+		return moduleName;
 	}
 	
-	public void setModulename(String modulename) {
-		this.modulename = modulename;
+	public void setModulename(String moduleName) {
+		this.moduleName = moduleName;
 	}
 	
 	public String getIconUrl() {
