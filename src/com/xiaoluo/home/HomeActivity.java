@@ -1,6 +1,7 @@
 package com.xiaoluo.home;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.google.gson.reflect.TypeToken;
+import com.xiaoluo.BaseFragment;
 import com.xiaoluo.BaseFragmentActivity;
 import com.xiaoluo.SplashActivity;
 import com.xiaoluo.entities.ModuleEntity;
@@ -32,7 +34,8 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 	private ActionBar mActionBar;
 	private ModuleAdapter mAdapter;
 	private ArrayList<ModuleEntity> mModuleEntities = new ArrayList<ModuleEntity>();
-	private String[] tabs = new String[]{"萝莉", "女王", "御姐"};
+	private HashMap<Integer, BaseFragment> mModuleFragments = new HashMap<Integer, BaseFragment>();
+	private HashMap<Integer, Boolean> mModuleFragmentsState = new HashMap<Integer, Boolean>();
 
 	@Override
 	protected void setContentView() {
@@ -50,7 +53,7 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 		
 		mAdapter = new ModuleAdapter(getSupportFragmentManager());
 		mHemoPager.setAdapter(mAdapter);
-//		mHemoPager.setOffscreenPageLimit(3);
+		mHemoPager.setOffscreenPageLimit(3);
 		mHemoPager.setOnPageChangeListener(this);
 		
 		mActionBar = getSupportActionBar();
@@ -141,7 +144,16 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 
 	    @Override
 	    public Fragment getItem(int i) {
-	        return ModuleFragment.newInstance(mModuleEntities.get(i));
+//	    	Trace.d("HomeActivity.java:getItem:"+ i);
+	    	BaseFragment fragment = null;
+	    	if(i % 2 != 0) {
+	    		fragment = ModuleFragment.newInstance(mModuleEntities.get(i));
+	    	} else {
+	    		fragment = ModuleFragment1.newInstance(mModuleEntities.get(i));
+	    	}
+	    	mModuleFragments.put(i, fragment);
+	    	mModuleFragmentsState.put(i, false);
+	        return fragment;
 	    }
 
 	    @Override
@@ -156,20 +168,30 @@ public class HomeActivity extends BaseFragmentActivity implements TabListener, O
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
-			Trace.d("destroyItem"+ position);
+			Trace.d("HomeActivity.java:destroyItem:"+ position);
+			mModuleFragments.remove(position);
 			super.destroyItem(container, position, object);
 		}
 
 		@Override
 		public Object instantiateItem(ViewGroup arg0, int arg1) {
-			Trace.d("instantiateItem"+ arg1);
+			Trace.d("HomeActivity.java:instantiateItem:"+ arg1);
 			return super.instantiateItem(arg0, arg1);
 		}
 
 		@Override
 		public void setPrimaryItem(ViewGroup container, int position,
 				Object object) {
-			Trace.d("setPrimaryItem"+ position);
+			Trace.d("HomeActivity.java:setPrimaryItem:"+ position);
+			// current fragment fetch data
+			if(mModuleFragmentsState.containsKey(position) && !mModuleFragmentsState.get(position)) {
+				BaseFragment fragment = mModuleFragments.get(position);
+				if(fragment.isReadyToFetchObjectData()) {
+					Trace.d("HomeActivity.java:setPrimaryItem:mModuleFragmentsState:"+ position);
+					mModuleFragmentsState.put(position, true);
+					fragment.fetchObjectData();
+				}
+			}
 			super.setPrimaryItem(container, position, object);
 		}
 	}

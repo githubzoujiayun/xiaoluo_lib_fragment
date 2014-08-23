@@ -35,13 +35,13 @@ import com.xiaoluo.utilities.UrlHelper;
  * @author xiaoluo
  * @version create time: 2014年8月20日 - 上午1:16:28
  */
-public class ModuleFragment extends BaseListFragment {
+public class ModuleFragment1 extends BaseListFragment {
 	private ModuleEntity mModuleEntity;
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	private ViewHolder mViewHolder;
 
 	public static BaseFragment newInstance(ModuleEntity moduleEntity) {
-		BaseFragment fragment = new ModuleFragment();
+		BaseFragment fragment = new ModuleFragment1();
 		Bundle args = new Bundle();
 		args.putSerializable("fragment_key", moduleEntity);
 		fragment.setArguments(args);
@@ -115,7 +115,7 @@ public class ModuleFragment extends BaseListFragment {
 		if (convertView == null || convertView.getTag() == null) {
 			mViewHolder = new ViewHolder();
 			convertView = LayoutInflater.from(getActivity()).inflate(
-					R.layout.fragment_list_module_item, null);
+					R.layout.fragment_list_module_item1, null);
 
 			mViewHolder.mCategoryIcon = (ImageView) convertView
 					.findViewById(R.id.mCategoryIcon);

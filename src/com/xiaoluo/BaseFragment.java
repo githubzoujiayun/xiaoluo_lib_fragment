@@ -11,11 +11,18 @@ import android.support.v4.app.Fragment;
  * @author xiaoluo 
  * @version create time: 2014年8月6日 - 上午10:48:42
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
+	private boolean isReadyToFetchObjectData;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		isReadyToFetchObjectData = true;
 	}
 
 	@Override
@@ -28,5 +35,11 @@ public class BaseFragment extends Fragment {
 			Bundle options) {
 		super.startActivityForResult(intent, requestCode);
 		getActivity().overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
+	}
+
+	public abstract void fetchObjectData();
+	
+	public boolean isReadyToFetchObjectData() {
+		return isReadyToFetchObjectData;
 	}
 }

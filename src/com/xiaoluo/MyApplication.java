@@ -18,6 +18,7 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.xiaoluo.home.R;
 import com.xiaoluo.utilities.FileUtil;
+import com.xiaoluo.utilities.Trace;
 
 import android.app.Application;
 import android.content.Context;
@@ -31,7 +32,9 @@ import android.content.Context;
 public class MyApplication extends Application {
 	public static Context mContext;
 	public static int mAppState;
-	private static DisplayImageOptions mImageOptions; 
+	private static DisplayImageOptions mImageOptions;
+	private static ImageLoaderConfiguration mImageLoaderConfig;
+	private static ImageLoader mImageLoader = ImageLoader.getInstance();;
 	
 	@Override
 	public void onCreate() {
@@ -40,11 +43,12 @@ public class MyApplication extends Application {
 		mAppState = -1;
 //		initalizeImageLoader();
 		initImageLoader(mContext);
+		Trace.d("MyApplication.java:onCreate():"+"initImageLoader(mContext)");
 	}
 
 	public static void initImageLoader(Context context) {
 		// 感觉这里没有调用到,这是一个疑问?
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+		mImageLoaderConfig = new ImageLoaderConfiguration.Builder(context)
 				.threadPriority(Thread.NORM_PRIORITY - 2)
 				.denyCacheImageMultipleSizesInMemory()
 				.diskCacheFileNameGenerator(new Md5FileNameGenerator())
@@ -53,7 +57,29 @@ public class MyApplication extends Application {
 				.writeDebugLogs() // Remove for release app
 				.build();
 		// Initialize ImageLoader with configuration.
-		ImageLoader.getInstance().init(config);
+		mImageLoader.init(mImageLoaderConfig);
+		
+		mImageOptions = new DisplayImageOptions.Builder()
+			.showImageOnLoading(R.drawable.ic_stub)
+			.showImageForEmptyUri(R.drawable.ic_empty)
+			.showImageOnFail(R.drawable.ic_error)
+			.cacheInMemory(true)
+			.cacheOnDisk(true)
+			.considerExifParams(true)
+			.displayer(new RoundedBitmapDisplayer(20))
+			.build();
+	}
+	
+	public static ImageLoaderConfiguration getmImageLoaderConfig() {
+		return mImageLoaderConfig;
+	}
+
+	public static ImageLoader getmImageLoader() {
+		return mImageLoader;
+	}
+
+	public static DisplayImageOptions getmImageOptions() {
+		return mImageOptions;
 	}
 	
 	public synchronized static void setAppState(int state) {
@@ -111,17 +137,4 @@ public class MyApplication extends Application {
 //	 	.build();//构建完成 
 //	}
 
-	public static DisplayImageOptions getmImageOptions() {
-		mImageOptions = new DisplayImageOptions.Builder()
-			.showImageOnLoading(R.drawable.ic_stub)
-			.showImageForEmptyUri(R.drawable.ic_empty)
-			.showImageOnFail(R.drawable.ic_error)
-			.cacheInMemory(true)
-			.cacheOnDisk(true)
-			.considerExifParams(true)
-			.displayer(new RoundedBitmapDisplayer(20))
-			.build();
-		
-		return mImageOptions;
-	}
 }
